@@ -11,14 +11,6 @@ const pool = mysql.createPool({
   database: process.env.DB_DATABASE,
 });
 
-/*const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "ktk41026!",
-  port: "3306",
-  database: "dormitory",
-});
 
-connection.connect();*/
 
 module.exports = { pool: pool };
