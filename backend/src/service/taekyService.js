@@ -1,12 +1,18 @@
 const { pool } = require("../../config/database");
 const useDao = require("../dao/taekyDao");
 const baseResponse = require("../../config/baseResponseStatus");
-const {response, errResponse} = require("../../config/response");
+const { response, errResponse } = require("../../config/response");
 
-exports.postRepair = async function(userId, building, room, content) {
+exports.postRepair = async function (userId, building, room, content) {
   try {
     const connection = await pool.getConnection(async (conn) => conn);
-    const result = await useDao.insertRepair(connection, userId, building, room, content);
+    const result = await useDao.insertRepair(
+      connection,
+      userId,
+      building,
+      room,
+      content
+    );
     console.log(result[0]);
     connection.release();
     return response(baseResponse.SUCCESS);
@@ -14,8 +20,8 @@ exports.postRepair = async function(userId, building, room, content) {
     console.log("App - Error At postRepair,", e);
     return errResponse(baseResponse.DB_ERROR);
   }
-}
-exports.updateRepairConfirm = async function(repairId) {
+};
+exports.updateRepairConfirm = async function (repairId) {
   try {
     const connection = await pool.getConnection(async (conn) => conn);
     const result = await useDao.updateRepairConfirm(connection, repairId);
@@ -26,9 +32,9 @@ exports.updateRepairConfirm = async function(repairId) {
     console.log("App - Error At updateRepairConfirm,", e);
     return errResponse(baseResponse.DB_ERROR);
   }
-}
+};
 
-exports.updateRepairState = async function(repairId) {
+exports.updateRepairState = async function (repairId) {
   try {
     const connection = await pool.getConnection(async (conn) => conn);
     const result = await useDao.updateRepairState(connection, repairId);
@@ -39,7 +45,7 @@ exports.updateRepairState = async function(repairId) {
     console.log("App - Error At updateRepairState,", e);
     return errResponse(baseResponse.DB_ERROR);
   }
-}
+};
 /*exports.delRepair = async function (userId) {
   try {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -54,10 +60,17 @@ exports.updateRepairState = async function(repairId) {
   }
 }*/
 
-exports.postApply = async function (userId, startDate, endDate, days, address, reason) {
+exports.postApply = async function (
+  userId,
+  startDate,
+  endDate,
+  days,
+  address,
+  reason
+) {
   try {
     const connection = await pool.getConnection(async (conn) => conn);
-    const postApplyParams = [userId, startDate, endDate, days, address, reason]
+    const postApplyParams = [userId, startDate, endDate, days, address, reason];
     const result = await useDao.insertApply(connection, postApplyParams);
     console.log(result[0]);
     connection.release();
@@ -66,6 +79,65 @@ exports.postApply = async function (userId, startDate, endDate, days, address, r
     console.log("App - Error At poasApply,", e);
     return errResponse(baseResponse.DB_ERROR);
   }
+};
+
+//수리요청
+/*async function postRepair(
+  repair_id,
+  buildname,
+  room,
+  name,
+  fixcontent,
+  state,
+  title
+) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const result = await useDao.insertRepair(
+    connection,
+    repair_id,
+    buildname,
+    room,
+    name,
+    fixcontent,
+    state,
+    title
+  );
+  connection.release();
+  return result;
+}
+*/
+/*async function delRepair(repair_id) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const result = await useDao.deleteRepair(connection, repair_id);
+  connection.release();
+  return result;
+}*/
+
+//외박신청
+/*async function postApply(
+  apply_id,
+  stuno,
+  name,
+  startDate,
+  endDate,
+  days,
+  address,
+  reason
+) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const result = await useDao.insertApply(
+    connection,
+    apply_id,
+    stuno,
+    name,
+    startDate,
+    endDate,
+    days,
+    address,
+    reason
+  );
+  connection.release();
+  return result;
 }
 
 /*async function delApply(apply_id) {
@@ -84,3 +156,44 @@ exports.postApply = async function (userId, startDate, endDate, days, address, r
   connection.release();
   return result;
 }*/
+
+//커뮤니티(일상,장터) 글 저장
+async function postCommu(commu_id, topic, title, content) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const result = await useDao.insertCommu(
+    connection,
+    commu_id,
+    topic,
+    title,
+    content
+  );
+  connection.release();
+  return result;
+}
+//커뮤니티 배달팟 글 저장
+async function postDelivery(topic, title, content, currentPeople, maxPeople) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const result = await useDao.insertDelivery(
+    connection,
+    topic,
+    title,
+    content,
+    currentPeople,
+    maxPeople
+  );
+  connection.release();
+  return result;
+}
+//커뮤니티 배달팟 글 수정
+async function updateDelivery(title, currentPeople) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const result = await useDao.updateDelivery(connection, title, currentPeople);
+  connection.release();
+  return result;
+}
+
+modules.exports = {
+  postCommu,
+  postDelivery,
+  updateDelivery,
+};

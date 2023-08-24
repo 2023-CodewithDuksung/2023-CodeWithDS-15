@@ -5,7 +5,8 @@ async function selectRepairRecords(connection, userId) {
   return result;
 }
 
-async function selectRepairRecordDetail(connection, userId) { //방 주인이 요청하지 않았을수도 있으니 건물이름과 방 번호도 추가
+async function selectRepairRecordDetail(connection, userId) {
+  //방 주인이 요청하지 않았을수도 있으니 건물이름과 방 번호도 추가
   const sql = `select id, date_format(created_at, '%y-%m-%d') as date, building, room, content, confirm, state from repair where userId = ?;`;
   const result = await connection.query(sql, userId);
   return result;
@@ -22,6 +23,12 @@ async function insertApply(connection, postApplyParams) {
   const result = await connection.query(sql, postApplyParams);
   return result;
 }
+
+/*async function deleteRepair(connection, repair_id) {
+  const sql = `DELETE FROM repair WHERE repair_id=? `;
+  const result = await connection.query(sql, repair_id);
+  return result;
+}*/
 
 async function updateRepairConfirm(connection, repairId) {
   const sql = `UPDATE repair SET confirm = "확인" WHERE id = ?;`;
@@ -51,12 +58,6 @@ async function deleteRepair(connection, repairId) {
   const sql = `SELECT startDate,endDate FROM apply`;
   const result = await connection.query(sql);
   return result;
-}
-
-async function selectApply(connection, apply_id) {
-  const sql = `SELECT * FROM apply WHERE apply_id=?`;
-  const result = await connection.query(sql, apply_id);
-  return result;
 }*/
 
 /*async function deleteApply(connection, apply_id) {
@@ -65,11 +66,82 @@ async function selectApply(connection, apply_id) {
   return result;
 }*/
 
+//커뮤니티(일상,장터) 글 저장
+async function insertCommu(connection) {
+  const sql = `INSERT INTO commu(commu_id,topic,title,content) VALUES (?,?,?,?)`;
+  const result = await connection.query(sql, [commu_id, topic, title, content]);
+  return result;
+}
+
+//커뮤니티 (일상,장터) 글 리스트 조회
+async function selectCommu(connection, topic) {
+  const sql = `SELECT title,content FROM commu WHERE topic=?`;
+  const result = await connection.query(sql, topic);
+  return result;
+}
+//커뮤니티 (일상,장터) 글 본문 조회
+async function selectCommuContent(connection, topic, title) {
+  const sql = `SELECT * FROM commu WHERE topic=? and title=?`;
+  const result = await connection.query(sql, [topic, title]);
+  return result;
+}
+//커뮤니티 배달팟 글 저장
+async function insertDelivery(
+  connection,
+  topic,
+  title,
+  content,
+  currentPeople,
+  maxPeople
+) {
+  const sql = `INSERT INTO delivery (topic,title,content,currentPeople,maxPeople) VALUES (?,?,?,?,?)`;
+  const result = await connection.query(sql, [
+    topic,
+    title,
+    content,
+    currentPeople,
+    maxPeople,
+  ]);
+  return result;
+}
+//커뮤니티 배달팟 글 리스트 조회
+async function selectDelivery(connection) {
+  const sql = `SELECT title,content,currentPeople,maxPeople FROM delivery`;
+  const result = await connection.query(sql);
+  return result;
+}
+//커뮤니티 배달팟 글 본문 조회
+async function selectDeliveryContent(connection, title) {
+  const sql = `SELECT * FROM delivery title=?`;
+  const result = await connection.query(sql, title);
+  return result;
+}
+//커뮤니티 배달팟 currentPeople 수정
+async function updateDelivery(connection, title, currentPeople) {
+  const sql = `UPDATE delivery SET title=? WHERE currentPeople`;
+  const result = await connection.query(sql, [title, currentPeople + 1]);
+  return result;
+}
+//점호방송 조회
+async function selectbroadcast(connection, date) {
+  const sql = `SELECT content FROM broadcast WHERE date=?`;
+  const result = await connection.query(sql, date);
+  return result;
+}
+
 module.exports = {
   selectRepairRecords,
   insertRepair,
   insertApply,
   selectRepairRecordDetail,
   updateRepairConfirm,
-  updateRepairState
+  updateRepairState,
+  insertCommu,
+  selectbroadcast,
+  selectCommu,
+  selectCommuContent,
+  insertDelivery,
+  selectDelivery,
+  selectDeliveryContent,
+  updateDelivery,
 };
