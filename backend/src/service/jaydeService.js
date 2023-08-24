@@ -48,7 +48,7 @@ exports.insertChangeReq = async function (userId, substitueMem, date, changeDate
         const changeReqId = await jaydeDao.findChangeReqId(connection, userId, date);
         console.log(changeReqId);
         //바꿔줄 수 있는 날짜 수에 따라 다르게 동작
-        if(changeDateList.length == 1) {
+        if(changeDateList.length === 1) {
             const updateCDateChangeReq = await jaydeDao.updateCDateChangeReq(connection, changeReqId[0].id, changeDateList[0].date); //CDate = ChangeDate = 바꿔줄 수 있다고 한 날짜
             console.log(updateCDateChangeReq);
             connection.release();
@@ -65,6 +65,21 @@ exports.insertChangeReq = async function (userId, substitueMem, date, changeDate
 
     } catch (err) {
         console.log(err);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}
+
+exports.updateChangeCleaning = async function (requestId, changeDate, state) { //거절이면 changeDate = null
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const updateChangeCleaningResult = await jaydeDao.updateChangeCleaning(connection, requestId, changeDate, state);
+        console.log(updateChangeCleaningResult);
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+    } catch (err) {
+        console.log(`App - updateChangeCleaning Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 }
