@@ -4,6 +4,10 @@ module.exports = function (app) {
 
     app.get('/menu', jayde.getMenu);
 
+    app.get('/notice', jayde.getNotice);
+
+    app.get('/home', jayde.getHome);
+
     app.get('/unit', jayde.getCleaningData);
 
     app.get('/unit/cleaningRecords', jayde.getCleaningRecords);
@@ -17,6 +21,8 @@ module.exports = function (app) {
     app.get('/unit/changeCleaning/memberSche', jayde.getMemberSche);
 
     app.post('/unit/requestChange', jayde.postChangeReq);
+
+    app.patch('/unit/requestChange/response', jayde.patchChangeCleaning); //상대가 팝업 버튼을 눌렀을 때
 
     app.get('/apitest', jayde.test);
 

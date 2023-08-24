@@ -1,12 +1,14 @@
 const baseResponse = require("../../config/baseResponseStatus");
 const {response, errResponse} = require("../../config/response");
-const mealObj = [];
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const jaydeProvider = require('../provider/jaydeProvider');
 const jaydeService = require('../service/jaydeService');
 const dotenv = require('dotenv');
 const moment = require("moment-timezone");
+
+const mealObj = [];
+const noticeObj = [];
 
 dotenv.config();
 async function getDietSchedule() {
@@ -40,7 +42,34 @@ async function getDietSchedule() {
 
         console.log(new Date());
         console.log(mealObj);
-        return response(baseResponse.SUCCESS, mealObj);
+        return mealObj;
+
+    } catch (err) {
+        console.error(err);
+        return errResponse(baseResponse.TABLE_NOT_EXIST);
+    } finally {
+        await browser.close();
+    }
+}
+
+async function getDormNoticeList() {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    try {
+        await page.goto('http://www.duksung.ac.kr/bbs/board.do?bsIdx=92&menuId=1288');
+        console.log(page.content());
+        const content = await page.content();
+        const $ = cheerio.load(content);
+
+        const noticeList = $("#boardList > tbody > tr > td.text-left > a");
+        noticeList.each((index, list) => {
+            const url = $(list).attr('href');
+            const title = $(list).text();
+            noticeObj.push({ url, title });
+        })
+
+        console.log(noticeObj);
+        return noticeObj;
 
     } catch (err) {
         console.error(err);
@@ -63,8 +92,22 @@ function getWeekRange() { //주차의 날짜를 구하는 함수
 
 exports.getMenu = async function (req, res) {
     const todayMeal = await getDietSchedule();
-
     return res.send(todayMeal);
+}
+
+exports.getNotice = async function (req, res) {
+    const notices = await getDormNoticeList();
+    return res.send(notices);
+}
+
+exports.getHome = async function (req, res) {
+    const todayMeal = await getDietSchedule();
+    const notices = await getDormNoticeList();
+    const result = {
+        todayMenu: todayMeal,
+        noticeList: notices
+    }
+    return res.send(response(baseResponse.SUCCESS, result));
 }
 
 exports.getCleaningData = async function(req, res) {
@@ -113,6 +156,13 @@ exports.getMemberSche = async function(req, res) {
 exports.postChangeReq = async function(req, res) {
     const { userId, substitueMem, date, changeDateList, reason } = req.body;
     const getUnitMemberName = await jaydeService.insertChangeReq(userId, substitueMem, date, changeDateList, reason);
+
+    return res.send(getUnitMemberName);
+}
+
+exports.patchChangeCleaning = async function(req, res) { //팝업으로 requestId, requesterName, requestDate, changeDateList가 전해졌다고 가정
+    const { requestId, changeDate, state } = req.body;
+    const getUnitMemberName = await jaydeService.updateChangeCleaning(requestId, changeDate, state);
 
     return res.send(getUnitMemberName);
 }

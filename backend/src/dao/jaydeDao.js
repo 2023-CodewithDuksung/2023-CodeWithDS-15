@@ -78,6 +78,12 @@ async function insertChangeDay(connection, changeReqId, changeDate) {
     const findMemberReulst = await connection.query(findUnitMemberIdQuery, [changeReqId, changeDate]);
     return findMemberReulst[0];
 }
+
+async function updateChangeCleaning(connection, requestId, changeDate, state) {
+    const findUnitMemberIdQuery = `UPDATE changecleaning SET changeDate = ?, state = ? WHERE id = ?;`;
+    const findMemberReulst = await connection.query(findUnitMemberIdQuery, [changeDate, state, requestId]);
+    return findMemberReulst[0];
+}
 async function test(connection) {//db test
     const testQuery = `SELECT * FROM student;`;
     const testReulst = await connection.query(testQuery);
@@ -99,5 +105,6 @@ module.exports = {
     updateCDateChangeReq,
     findChangeReqId,
     insertChangeDay,
+    updateChangeCleaning,
     test
 };
