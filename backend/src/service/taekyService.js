@@ -158,42 +158,24 @@ exports.postApply = async function (
 }*/
 
 //커뮤니티(일상,장터) 글 저장
-async function postCommu(commu_id, topic, title, content) {
+exports.postCommu = async function(title, topic, content, writerId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const result = await useDao.insertCommu(
-    connection,
-    commu_id,
-    topic,
-    title,
-    content
-  );
+  const result = await useDao.insertCommu(connection, title, topic, content, writerId);
   connection.release();
-  return result;
+  return response(baseResponse.SUCCESS);
 }
 //커뮤니티 배달팟 글 저장
-async function postDelivery(topic, title, content, currentPeople, maxPeople) {
+exports.postDelivery = async function(title, description, eto, pplLimit, slot) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const result = await useDao.insertDelivery(
-    connection,
-    topic,
-    title,
-    content,
-    currentPeople,
-    maxPeople
-  );
+  const result = await useDao.insertDelivery(connection, title, description, eto, pplLimit, slot);
   connection.release();
-  return result;
+  return response(baseResponse.SUCCESS);
 }
 //커뮤니티 배달팟 글 수정
-async function updateDelivery(title, currentPeople) {
+/*
+exports.postDelivery = async function(title, currentPeople) {
   const connection = await pool.getConnection(async (conn) => conn);
   const result = await useDao.updateDelivery(connection, title, currentPeople);
   connection.release();
   return result;
-}
-
-modules.exports = {
-  postCommu,
-  postDelivery,
-  updateDelivery,
-};
+}*/

@@ -104,19 +104,6 @@ async function usepostRepair() {
   };
 }*/
 
-//공지사항
-async function usegetTitleNotice() {
-  async (req, res) => {
-    await res.send(useProvider.getTitleNotice());
-  };
-}
-async function usegetNotice() {
-  async (req, res) => {
-    const notice_id = req.query.id;
-    parseInt(notice_id);
-    await res.send(useProvider.getNotice(notice_id));
-  };
-}
 //외박신청
 /*async function usegetTitleApply() {
 >>>>>>> Stashed changes
@@ -145,79 +132,55 @@ async function usedelApply() {
 }*/
 
 //커뮤니티 (일상,장터) 글 저장
-async function usepostCommu(req, res) {
-  const { commu_id, topic, title, content } = req.body;
-  await useService.postCommu(commu_id, title, topic, content);
+exports.usepostCommu = async function (req, res) {
+  const { topic, title, content, writerId } = req.body;
+  const result = await useService.postCommu(title, topic, content, writerId);
+  return res.send(result);
 }
 //커뮤니티 (일상,장터) 글 리스트 조회
-async function usegetCommu(req, res) {
-  const topic = req.query.commutopic;
+exports.usegetCommu = async function(req, res) {
+  const topic = req.query.topic;
   const result = await useProvider.getCommu(topic);
-  await res.send(result);
+  await res.send(response(baseResponse.SUCCESS, result));
 }
 //커뮤니티 (일상,장터) 글 본문 조회
-async function usegetCommuContent(req, res) {
-  const topic = req.query.commutopic;
-  const title = req.query.commutitle;
+exports.usegetCommuContent = async function(req, res) {
+  const topic = req.query.topic;
+  const title = req.query.title;
   const result = await useProvider.getCommuContent(topic, title);
-  await res.send(result);
+  return res.send(response(baseResponse.SUCCESS, result));
 }
 //커뮤니티 배달팟 글 리스트 조회
-async function usegetDelivery(req, res) {
+exports.usegetDelivery = async function (req, res) {
   const result = await useProvider.getDelivery();
-  await res.send(result);
+  return res.send(response(baseResponse.SUCCESS, result));
 }
 //커뮤니티 배달팟 글 본문 조회
-async function usegetDeliveryContent(req, res) {
-  const title = req.query.deliverytitle;
+exports.usegetDeliveryContent = async function (req, res) {
+  const title = req.query.title;
   const result = await useProvider.getDeliveryContent(title);
-  await res.send(result);
+  return res.send(response(baseResponse.SUCCESS, result));
 }
 //커뮤니티 배달팟 글 저장
-async function usepostDelivery(req, res) {
-  const { topic, title, content, currentPeople, maxPeople } = req.body;
-  await useService.postDelivery(
-    topic,
-    title,
-    content,
-    currentPeople,
-    maxPeople
-  );
+exports.usepostDelivery = async function (req, res) {
+  const { title, description, eto, pplLimit, slot } = req.body;
+  const result = await useService.postDelivery(title, description, eto, pplLimit, slot);
+  return res.send(result);
 }
 //커뮤니티 배달팟 글 수정(현재 인원)
-async function useupdateDelivery(req, res) {
-  const { title, currentPeople, maxPeople } = req.body;
+/*exports.useupdateDelivery = async function (req, res) {
+  const { title, slot } = req.body;
   if (currentPeople > maxPeople) {
     throw error;
   } else {
     const result = await useService.updateDelivery(title, currentPeople);
     return res.send(result);
   }
-}
+}*/
 //점호방송 조회
-async function usegetBroadcast(req, res) {
-  const date = req.query.broadcastdate;
-  const result = await useProvider.getBroadcast(date);
+exports.usegetBroadcast = async function (req, res) {
+  const date = req.query.date;
+  const building = req.query.building;
+  const result = await useProvider.getBroadcast(date, building);
   return res.send(result);
 }
-
-module.exports = {
-  usepostRepair,
-  //usedelRepair,
-  usepostApply,
-  //usedelApply,
-  usegetTitleRepair,
-  usegetRepair,
-  usegetTitleNotice,
-  usegetNotice,
-  //usegetTitleApply,
-  usegetApply,
-  usepostCommu,
-  usegetCommu,
-  usegetBroadcast,
-  usegetCommuContent,
-  usegetDelivery,
-  usegetDeliveryContent,
-  usepostDelivery,
-  useupdateDelivery,
-};

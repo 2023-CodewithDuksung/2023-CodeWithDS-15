@@ -67,65 +67,52 @@ async function deleteRepair(connection, repairId) {
 }*/
 
 //커뮤니티(일상,장터) 글 저장
-async function insertCommu(connection) {
-  const sql = `INSERT INTO commu(commu_id,topic,title,content) VALUES (?,?,?,?)`;
-  const result = await connection.query(sql, [commu_id, topic, title, content]);
-  return result;
+async function insertCommu(connection, title, topic, content, writerId) {
+  const sql = `INSERT INTO post(title,topic,content, writerId) VALUES (?,?,?,?);`;
+  const result = await connection.query(sql, [title, topic, content, writerId]);
+  return result[0];
 }
 
 //커뮤니티 (일상,장터) 글 리스트 조회
 async function selectCommu(connection, topic) {
-  const sql = `SELECT title,content FROM commu WHERE topic=?`;
+  const sql = `SELECT title,content FROM post WHERE topic=?;`;
   const result = await connection.query(sql, topic);
-  return result;
+  return result[0];
 }
 //커뮤니티 (일상,장터) 글 본문 조회
 async function selectCommuContent(connection, topic, title) {
-  const sql = `SELECT * FROM commu WHERE topic=? and title=?`;
+  const sql = `SELECT * FROM post WHERE topic=? and title=?;`;
   const result = await connection.query(sql, [topic, title]);
-  return result;
+  return result[0];
 }
 //커뮤니티 배달팟 글 저장
-async function insertDelivery(
-  connection,
-  topic,
-  title,
-  content,
-  currentPeople,
-  maxPeople
-) {
-  const sql = `INSERT INTO delivery (topic,title,content,currentPeople,maxPeople) VALUES (?,?,?,?,?)`;
-  const result = await connection.query(sql, [
-    topic,
-    title,
-    content,
-    currentPeople,
-    maxPeople,
-  ]);
-  return result;
+async function insertDelivery(connection, title, description, eto, pplLimit, slot) {
+  const sql = `INSERT INTO delivery (title, description, eto, pplLimit, slot) VALUES (?,?,?,?,?);`;
+  const result = await connection.query(sql, [title, description, eto, pplLimit, slot]);
+  return result[0];
 }
 //커뮤니티 배달팟 글 리스트 조회
 async function selectDelivery(connection) {
-  const sql = `SELECT title,content,currentPeople,maxPeople FROM delivery`;
+  const sql = `SELECT * FROM delivery;`;
   const result = await connection.query(sql);
-  return result;
+  return result[0];
 }
 //커뮤니티 배달팟 글 본문 조회
 async function selectDeliveryContent(connection, title) {
-  const sql = `SELECT * FROM delivery title=?`;
+  const sql = `SELECT * FROM delivery WHERE title=?;`;
   const result = await connection.query(sql, title);
   return result;
 }
-//커뮤니티 배달팟 currentPeople 수정
+/*//커뮤니티 배달팟 currentPeople 수정
 async function updateDelivery(connection, title, currentPeople) {
   const sql = `UPDATE delivery SET title=? WHERE currentPeople`;
   const result = await connection.query(sql, [title, currentPeople + 1]);
   return result;
-}
+}*/
 //점호방송 조회
-async function selectbroadcast(connection, date) {
-  const sql = `SELECT content FROM broadcast WHERE date=?`;
-  const result = await connection.query(sql, date);
+async function selectbroadcast(connection, date, building) {
+  const sql = `SELECT content FROM broadcast WHERE date=? and building = ?`;
+  const result = await connection.query(sql, [date, building]);
   return result;
 }
 
@@ -143,5 +130,5 @@ module.exports = {
   insertDelivery,
   selectDelivery,
   selectDeliveryContent,
-  updateDelivery,
+  //updateDelivery,
 };

@@ -44,15 +44,15 @@ async function getNotice(notice_id) {
 }*/
 
 //점호방송 조회
-async function getBroadcast(date) {
+exports.getBroadcast = async function (date, building) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const result = await useDao.selectbroadcast(connection, date);
+  const result = await useDao.selectbroadcast(connection, date, building);
   connection.release();
   return result;
 }
 
 //커뮤니티 (일상,장터) 글 리스트 조회
-async function getCommu(topic) {
+exports.getCommu = async function (topic) {
   const connection = await pool.getConnection(async (conn) => conn);
   const result = await useDao.selectCommu(connection, topic);
   connection.release();
@@ -60,7 +60,7 @@ async function getCommu(topic) {
 }
 
 //커뮤니티 (일상,장터) 글 본문 조회
-async function getCommuContent(topic, title) {
+exports.getCommuContent = async function (topic, title) {
   const connection = await pool.getConnection(async (conn) => conn);
   const result = await useDao.selectCommuContent(connection, topic, title);
   connection.release();
@@ -68,24 +68,16 @@ async function getCommuContent(topic, title) {
 }
 
 //배달팟 글 리스트 조회
-async function getDelivery() {
+exports.getDelivery = async function() {
   const connection = await pool.getConnection(async (conn) => conn);
   const result = await useDao.selectDelivery(connection);
   connection.release();
   return result;
 }
 //배달팟 글 본문 조회
-async function getDeliveryContent(title) {
+exports.getDeliveryContent = async function (title) {
   const connection = await pool.getConnection(async (conn) => conn);
   const result = await useDao.selectDeliveryContent(connection, title);
   connection.release();
   return result;
 }
-
-module.exports = {
-  getBroadcast,
-  getCommu,
-  getCommuContent,
-  getDelivery,
-  getDeliveryContent,
-};

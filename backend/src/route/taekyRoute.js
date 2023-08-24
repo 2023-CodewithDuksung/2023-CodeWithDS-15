@@ -8,13 +8,13 @@ module.exports = function (app) {
   app.post("/stayout/apply", use.usepostApply);
 
   app.get("/commu", use.usegetCommu);
-  app.get("/commu/commu-detail", use.usegetCommuContent);
+  app.get("/commu/detail", use.usegetCommuContent);
   app.post("/commu", use.usepostCommu);
 
   app.get("/delivery", use.usegetDelivery);
-  app.get("/delivery/delivery-detail", use.usegetDeliveryContent);
+  app.get("/delivery/detail", use.usegetDeliveryContent);
   app.post("/delivery", use.usepostDelivery);
-  app.patch("/delivery/delivery-attend");
+  //app.patch("/delivery/delivery-attend", use.);
 
   app.get("/broadcast", use.usegetBroadcast);
 };
