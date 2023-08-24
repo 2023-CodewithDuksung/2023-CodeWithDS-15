@@ -17,11 +17,15 @@ module.exports = function () {
   app.use(cors());
 
   app.get("/", () => {
-    console.log("루트 페이지로 접속하셨습니다.");
+    try{
+      console.log("루트 페이지로 접속하셨습니다.");
+    } catch (e) {
+      console.log(e);
+    }
   });
 
-  require("../src/route/guideRoute")(app);
-  //require("../src/route/taekyRoute")(app);
+  require('../src/route/jaydeRoute')(app);
+  require('../src/route/taekyRoute')(app);
 
   return app;
 };
